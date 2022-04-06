@@ -9,7 +9,6 @@ jwt:
   access_token_min_lifetime: "15m"
   refresh_token_min_lifetime: "1h"
   two_factor_auth_token_min_lifetime: "1h"
-  reset_password_token_min_lifetime: "1h"
 
 # 2fa settings:
 2fa:

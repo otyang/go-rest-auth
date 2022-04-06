@@ -32,8 +32,7 @@ func main() {
 	jwtConf := authentication.NewJwtConfigurator(
 		viper.GetDuration("jwt.access_token_min_lifetime"),
 		viper.GetDuration("jwt.refresh_token_min_lifetime"),
-		viper.GetDuration("jwt.two_factor_auth_token_min_lifetime"),
-		viper.GetDuration("jwt.reset_password_token_min_lifetime"))
+		viper.GetDuration("jwt.two_factor_auth_token_min_lifetime"))
 
 	// Init a new fiber application
 	app := fiber.New()

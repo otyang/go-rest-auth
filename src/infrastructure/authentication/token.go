@@ -23,17 +23,15 @@ type JwtConfigurator struct {
 	AccessTokenMaxAge        time.Duration
 	RefreshTokenMaxAge       time.Duration
 	TwoFactorAuthTokenMaxAge time.Duration
-	ResetPasswordTokenMaxAge time.Duration
 	SigningMethod            *jwt.SigningMethodRSA
 }
 
-func NewJwtConfigurator(atMaxAge, rtMaxAge, TwoFactorAuthTokenMaxAge, ResetPasswordTokenMaxAge time.Duration) *JwtConfigurator {
+func NewJwtConfigurator(atMaxAge, rtMaxAge, TwoFactorAuthTokenMaxAge time.Duration) *JwtConfigurator {
 
 	return &JwtConfigurator{
 		AccessTokenMaxAge:        atMaxAge,
 		RefreshTokenMaxAge:       rtMaxAge,
 		TwoFactorAuthTokenMaxAge: TwoFactorAuthTokenMaxAge,
-		ResetPasswordTokenMaxAge: ResetPasswordTokenMaxAge,
 		SigningMethod:            jwt.SigningMethodRS512,
 	}
 }
