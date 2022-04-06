@@ -1,0 +1,62 @@
+# Project:
+project_name: "auth-project"
+
+# Environment:
+env: "local"
+
+# Jwt settings:
+jwt:
+  access_token_min_lifetime: "15m"
+  refresh_token_min_lifetime: "1h"
+  two_factor_auth_token_min_lifetime: "1h"
+  reset_password_token_min_lifetime: "1h"
+
+# 2fa settings:
+2fa:
+  send_timeout: "1m"
+  token_min_lifetime: "2h"
+
+# websocket setting:
+ws:
+  timeout_duration: "15m"
+
+# qr_cod settings:
+qr_code:
+  token_min_lifetime: "2h"
+
+# HTTP front settings:
+http_front:
+  host: "http://localhost:8880"
+
+# HTTP settings:
+http:
+  host: "localhost"
+  port: ":8880"
+  read_timeout: "5"
+  write_timeout: "10"
+
+# Database settings:
+db:
+  host: "localhost"
+  port: ":5436"
+  user: "postgres"
+  pass: "12345"
+  name: "auth"
+
+# Redis settings:
+rdb:
+  host: "localhost"
+  port: ":6379"
+
+# twilio sms settings:
+twilio_sms:
+  accountSid: ""
+  authToken: ""
+  phone: ""
+
+
+# sendGrid email settings:
+sendgrid:
+  api_key: ""
+  from_name: ""
+  from_address: ""
