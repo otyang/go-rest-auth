@@ -46,7 +46,7 @@ func (ti *twoFactorAuthInteractor) ReSendTwoFactorAuthCode(ctx context.Context, 
 
 	switch {
 	case usr.IsGoogleVerified:
-		return nil, fiber.NewError(fiber.StatusConflict, "the user has two factor authentication using Google")
+		return nil, fiber.NewError(fiber.StatusConflict, "the user already has two-factor authentication with Google")
 
 	case usr.IsPhoneVerified:
 		target, err := ti.TokenRepository.Send2faCode(ctx, &model.Send2faCodeData{
