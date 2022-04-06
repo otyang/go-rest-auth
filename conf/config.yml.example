@@ -1,0 +1,25 @@
+# Environment:
+env: "local"
+
+# Jwt settings:
+jwt:
+  at_min_lifetime: "15m"
+  rt_min_lifetime: "1h"
+
+# HTTP settings:
+http:
+  port: ":8880"
+
+# Database settings:
+db:
+  host: "localhost"
+  port: ":5436"
+  user: "postgres"
+  pass: "12345"
+  name: "auth_proj"
+
+# Redis settings:
+rdb:
+  host: "localhost"
+  port: ":6379"
+
