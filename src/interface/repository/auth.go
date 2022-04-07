@@ -34,7 +34,7 @@ func (ar *authRepository) StoreTokenPair(ctx context.Context, td *model.TokenDet
 
 	sessionIdRt := sessionID + model.PostfixRefreshToken
 
-	// set information in Redis, where the key is the user ID
+	// set information in Redis, where the key is the session ID
 	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
 		rdb.HSet(ctx, sessionID, "at_id", td.AtID)
 		rdb.HSet(ctx, sessionID, "rt_id", td.RtID)
@@ -45,7 +45,7 @@ func (ar *authRepository) StoreTokenPair(ctx context.Context, td *model.TokenDet
 	// set lifetime for redis key
 	ar.rdb.Expire(ctx, sessionID, at.Sub(now))
 
-	// set information in Redis, where the key is the user ID
+	// set information in Redis, where the key is the session ID
 	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
 		rdb.HSet(ctx, sessionIdRt, "rt_id", td.RtID)
 		rdb.HSet(ctx, sessionIdRt, "at_id", td.AtID)
@@ -64,7 +64,7 @@ func (ar *authRepository) StoreAccessToken(ctx context.Context, atd *model.Acces
 	twoFactorAuthToken := time.Unix(atd.AtExpires, 0)
 	now := time.Now().UTC()
 
-	// set information in Redis, where the key is the user ID
+	// set information in Redis, where the key is the session ID
 	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
 		rdb.HSet(ctx, sessionID, "at_id", atd.AtID)
 		return nil
