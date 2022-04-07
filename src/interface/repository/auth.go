@@ -35,26 +35,8 @@ func (ar *authRepository) StoreTokenPair(ctx context.Context, td *model.TokenDet
 	sessionIdRt := sessionID + model.PostfixRefreshToken
 
 	// set information in Redis, where the key is the session ID
-	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
-		rdb.HSet(ctx, sessionID, "at_id", td.AtID)
-		rdb.HSet(ctx, sessionID, "rt_id", td.RtID)
-		return nil
-	}); err != nil {
-		return err
-	}
-	// set lifetime for redis key
-	ar.rdb.Expire(ctx, sessionID, at.Sub(now))
-
-	// set information in Redis, where the key is the session ID
-	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
-		rdb.HSet(ctx, sessionIdRt, "rt_id", td.RtID)
-		rdb.HSet(ctx, sessionIdRt, "at_id", td.AtID)
-		return nil
-	}); err != nil {
-		return err
-	}
-	// set lifetime for redis key
-	ar.rdb.Expire(ctx, sessionIdRt, rt.Sub(now))
+	ar.rdb.Set(ctx, sessionID, td.AtID, at.Sub(now))
+	ar.rdb.Set(ctx, sessionIdRt, td.RtID, rt.Sub(now))
 
 	return nil
 }
@@ -65,14 +47,7 @@ func (ar *authRepository) StoreAccessToken(ctx context.Context, atd *model.Acces
 	now := time.Now().UTC()
 
 	// set information in Redis, where the key is the session ID
-	if _, err := ar.rdb.Pipelined(ctx, func(rdb redis.Pipeliner) error {
-		rdb.HSet(ctx, sessionID, "at_id", atd.AtID)
-		return nil
-	}); err != nil {
-		return err
-	}
-	// set lifetime for redis key
-	ar.rdb.Expire(ctx, sessionID, twoFactorAuthToken.Sub(now))
+	ar.rdb.Set(ctx, sessionID, atd.AtID, twoFactorAuthToken.Sub(now))
 
 	return nil
 }
@@ -84,9 +59,8 @@ func (ar *authRepository) FetchAuth(ctx context.Context, sessionID string) (stri
 		return "", errors.New("at token dont found")
 	}
 
-	var usrInfo model.UserRedisSessionData
-	err := ar.rdb.HMGet(ctx, redisRtKey, "rt_id").Scan(&usrInfo)
-	if err != nil {
+	val, err := ar.rdb.Get(ctx, redisRtKey).Result()
+	if err != nil && err != redis.Nil {
 		return "", err
 	}
 
@@ -96,18 +70,17 @@ func (ar *authRepository) FetchAuth(ctx context.Context, sessionID string) (stri
 
 	ar.rdb.Del(ctx, redisRtKey)
 
-	return usrInfo.RtID, nil
+	return val, nil
 }
 
 func (ar *authRepository) ValidateAccessToken(ctx context.Context, atID string, sessionID string) error {
 
-	var usrInfo model.UserRedisSessionData
-	err := ar.rdb.HMGet(ctx, sessionID, "at_id").Scan(&usrInfo)
-	if err != nil {
+	val, err := ar.rdb.Get(ctx, sessionID).Result()
+	if err != nil && err != redis.Nil {
 		return err
 	}
 
-	if usrInfo.AtID != atID {
+	if val != atID {
 		return errors.New("unauthorized")
 	}
 

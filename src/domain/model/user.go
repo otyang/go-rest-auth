@@ -115,12 +115,6 @@ type UserSessionData struct {
 	ClientIp  string `json:"client_ip"`
 }
 
-// UserRedisSessionData entity of the user redis session data
-type UserRedisSessionData struct {
-	AtID string `redis:"at_id"`
-	RtID string `redis:"rt_id"`
-}
-
 // SignUpReq entity of the sign-up request
 type SignUpReq struct {
 	Login     string `json:"login"`

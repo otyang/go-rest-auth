@@ -366,12 +366,6 @@ func (ur *userRepository) UpdateUserEmailByID(ctx context.Context, email string,
 // SignOut clear redis key, and check exist
 func (ur *userRepository) SignOut(ctx context.Context, sessionID string) error {
 
-	var usrInfo model.UserRedisSessionData
-	err := ur.rdb.HMGet(ctx, sessionID, "user_id", "rt_id").Scan(&usrInfo)
-	if err != nil {
-		return err
-	}
-
 	ur.rdb.Del(ctx, sessionID)
 	ur.rdb.Del(ctx, sessionID+model.PostfixRefreshToken)
 
@@ -380,7 +374,7 @@ func (ur *userRepository) SignOut(ctx context.Context, sessionID string) error {
 		return errors.New("redis key deleting error")
 	}
 
-	_, err = ur.db.NewUpdate().Model((*model.Session)(nil)).
+	_, err := ur.db.NewUpdate().Model((*model.Session)(nil)).
 		Where("session_id = ?", sessionID).
 		Set("is_logout = TRUE").
 		Set("updated_at = ?", time.Now().UTC()).
@@ -406,12 +400,6 @@ func (ur *userRepository) SignOutAll(ctx context.Context, usrID string) error {
 	}
 
 	for _, session := range sessions {
-		var usrInfo model.UserRedisSessionData
-		err := ur.rdb.HMGet(ctx, session.SessionID+model.PostfixRefreshToken, "user_id", "at_id").Scan(&usrInfo)
-		if err != nil {
-			return err
-		}
-
 		ur.rdb.Del(ctx, session.SessionID+model.PostfixRefreshToken)
 		ur.rdb.Del(ctx, session.SessionID)
 
